@@ -1,0 +1,13 @@
+- login
+- signup
+- make task
+ - title
+ - descr
+ - start date
+ - end date
+ - color ( extra )
+- displaying all task
+ - all will be like boxes
+ - showing time remaining
+ - button with mark as accomplished
+ - when marked effect with like ballon bursted
