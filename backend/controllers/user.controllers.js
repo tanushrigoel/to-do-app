@@ -1,6 +1,7 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
+import { Notes } from "../models/notes.model.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -65,4 +66,28 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("token", token);
 });
 
-export { registerUser, loginUser };
+const showToDos = asyncHandler(async (req, res) => {
+  const cookie = req.cookies.token;
+  if (!cookie) {
+    throw new ApiError(400, "User does not exist");
+  }
+
+  const decoded_token = jwt.verify(cookie, process.env.TOKEN_SECRET);
+
+  const user = await User.findById(decoded_token._id).select(
+    "-password -token"
+  );
+
+  if (!user) {
+    throw new ApiError(400, "User not found");
+  }
+
+  const notes = await Notes.find({ user: user._id });
+
+  res.status(200).json({
+    success: true,
+    notes,
+  });
+});
+
+export { registerUser, loginUser, showToDos };
